@@ -1,0 +1,1 @@
+{"schema":{"checkVM":{"id":"checkVM","type":{"dataType":"reference","referenceType":"VC:VirtualMachine"},"label":"checkVM"}},"layout":{"pages":[{"id":"page_isieq3vw","title":"General","sections":[{"id":"section_vl6rx6t1","fields":[{"id":"checkVM","display":"valuePickerTree"}]}]}]},"options":{"externalValidations":[]},"itemId":""}

@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="formDropDown" result-type="Array/string" api-version="6.0.0" id="d5e2b24a-a22d-4ebc-b013-8f462239a245" version="0.0.1" category-name="com.vmware.gss">
+  <description><![CDATA[simple Action to return a string array to be used as drop down]]></description>
+  <script encoded="false"><![CDATA[value=["Item1","Item2","Item3"]
+return value]]></script>
+</dunes-script-module>

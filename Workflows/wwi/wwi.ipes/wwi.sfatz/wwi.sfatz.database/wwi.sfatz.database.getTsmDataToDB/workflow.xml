@@ -1,0 +1,234 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item18" object-name="workflow:name=generic" id="4ecb643c-69ee-4879-b195-c7906267a78c" version="1.2.3" api-version="6.0.0" allowed-operations="evf" editor-version="1.6" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[wwi.sfatz.database.getTsmDataToDB]]></display-name>
+  <error-handler name="item9" throw-bind-name="errorCode">
+    <position y="63.59090909090908" x="465.0"/>
+  </error-handler>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="inTaskSchedulerRunId" type="string"/>
+  </input>
+  <attrib name="myJsonNodes" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+    <description><![CDATA[JSON String aller Nodes]]></description>
+  </attrib>
+  <attrib name="mySQLUser" type="string" read-only="false" conf-id="d509ac3c-2c1b-435b-af6d-99b58b0ca124" conf-key="sqlUser">
+    <value encoded="n"><![CDATA[]]></value>
+  </attrib>
+  <attrib name="mySQLPass" type="SecureString" read-only="false" conf-id="d509ac3c-2c1b-435b-af6d-99b58b0ca124" conf-key="sqlPass"/>
+  <attrib name="mySQLServer" type="string" read-only="false" conf-id="d509ac3c-2c1b-435b-af6d-99b58b0ca124" conf-key="sqlServer">
+    <value encoded="n"><![CDATA[]]></value>
+  </attrib>
+  <attrib name="mySQLPort" type="string" read-only="false" conf-id="d509ac3c-2c1b-435b-af6d-99b58b0ca124" conf-key="sqlPort">
+    <value encoded="n"><![CDATA[]]></value>
+  </attrib>
+  <attrib name="mySQLDatabase" type="string" read-only="false" conf-id="d509ac3c-2c1b-435b-af6d-99b58b0ca124" conf-key="sqlDBvmwareOrder">
+    <value encoded="n"><![CDATA[]]></value>
+  </attrib>
+  <attrib name="errorCode" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+  </attrib>
+  <attrib name="myAllowedTsmServers" type="Array/string" read-only="false" conf-id="883b8d83-4f54-4405-b8b4-5100644b97c1" conf-key="AllowedTSMServers"/>
+  <attrib name="myLoopCounter" type="number" read-only="false">
+    <value encoded="n"><![CDATA[0.0]]></value>
+    <description><![CDATA[Counter of loop executions]]></description>
+  </attrib>
+  <attrib name="myLoopAllowedTsmServers" type="Array/string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+    <description><![CDATA[Allowed TSM Servers during loop execution]]></description>
+  </attrib>
+  <attrib name="myTimestamp" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+  </attrib>
+  <workflow-item name="item4" out-name="item7" throw-bind-name="errorCode" type="task">
+    <display-name><![CDATA[Update DB]]></display-name>
+    <script encoded="false"><![CDATA[// Datenbank Verbindung aufbauen
+var myJDBCConnection = new JDBCConnection();
+var mySQLConnection	 = myJDBCConnection.getConnection("jdbc:mysql://"+mySQLServer+":"+mySQLPort+"/"+mySQLDatabase,mySQLUser,mySQLPass);
+
+// Alle Scheduler durchgehen
+for each (var Node in JSON.parse(myJsonNodes)) {
+
+	// Nur aktive Nodes in Datenbank schreiben
+	if (!Node.Decommissioned || !Node.Decommissioned.def || Node.Decommissioned.def != "Yes") {
+		var myUpdateQuery = "INSERT INTO tsm_nodes SET " +
+								"nodeName='" + Node.NAME + "'," +
+								"nodePlatform='" + Node.PLATFORM + "'," +
+								"nodeDomain='" + Node.DOMAIN + "'," +
+								"nodeServer='" + Node.SERVER + "'," +
+								"nodeLastAccess=" + (Node["Last Access Date/Time"] && Node["Last Access Date/Time"]["secs"] && Node["Last Access Date/Time"]["secs"] > 0 ? "'" + Node["Last Access Date/Time"]["secs"] + "'" : "NULL" ) + "," +
+								"nodeClientVersion=" + (Node["Client Version"] instanceof String ? "'" + Node["Client Version"] + "'" : "NULL") + "," +
+								"nodeNetworkName=" + (Node["TCP/IP Name"] ? "'" + Node["TCP/IP Name"].toString().toLowerCase() + "'" : "NULL") + "," +
+								"nodeNetworkAddress=" + (Node["TCP/IP Address"] ? "'" + Node["TCP/IP Address"].toString().toLowerCase() + "'" : "NULL") + "," +
+								"nodeLastSessionDuration=" + (Node["Duration of Last Session"] ? "'" + Node["Duration of Last Session"].toString() + "'" : "NULL") + "," +
+								"nodeInsertTimestamp='" + myTimestamp + "'"; 
+		
+		System.debug(JSON.stringify(Node));
+																				
+		var myUpdateStatement = mySQLConnection.prepareStatement(myUpdateQuery);
+		myUpdateStatement.executeUpdate();
+		
+		if (Node.SCHEDULES && Node.SCHEDULES.length > 0) {
+		
+			System.debug(JSON.stringify(Node.SCHEDULES));
+		
+			for each (var Schedule in Node.SCHEDULES) {
+				if (Schedule.SCHEDULE_NAME) {
+					var myUpdateQuery = "INSERT INTO tsm_schedules SET " +
+											"scheduleName='" + Schedule.SCHEDULE_NAME + "'," +
+											"scheduleStartTime='" + Schedule.START_TIME + "'," +
+											"scheduleServer='" + Schedule.SERVER_NAME + "'," +
+											"scheduleDomain='" + Schedule.DOMAIN_NAME + "'," +
+											"scheduleNode='" + Node.NAME + "'";
+											
+					var myUpdateStatement = mySQLConnection.prepareStatement(myUpdateQuery);
+					myUpdateStatement.executeUpdate();
+				}
+			}			
+		}
+	}
+}
+
+mySQLConnection.close();]]></script>
+    <in-binding>
+      <bind name="myJsonNodes" type="string" export-name="myJsonNodes"/>
+      <bind name="mySQLUser" type="string" export-name="mySQLUser"/>
+      <bind name="mySQLPass" type="SecureString" export-name="mySQLPass"/>
+      <bind name="mySQLServer" type="string" export-name="mySQLServer"/>
+      <bind name="mySQLPort" type="string" export-name="mySQLPort"/>
+      <bind name="mySQLDatabase" type="string" export-name="mySQLDatabase"/>
+      <bind name="myTimestamp" type="string" export-name="myTimestamp"/>
+    </in-binding>
+    <out-binding/>
+    <position y="246.3181818181818" x="324.5"/>
+  </workflow-item>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <in-binding/>
+    <position y="363.59090909090907" x="105.0"/>
+  </workflow-item>
+  <workflow-item name="item2" out-name="item4" throw-bind-name="errorCode" type="link" linked-workflow-id="bbacf8c7-d6b9-43d2-b65d-54abe0e67fc4">
+    <display-name><![CDATA[wwi.tsm.getNodeDetails]]></display-name>
+    <in-binding>
+      <bind name="inNodeName" type="string" export-name="NULL">
+        <description><![CDATA[<optional>Name of the TSM Node (otherwise all Nodes will be received)]]></description>
+      </bind>
+      <bind name="InAllowedTsmServers" type="Array/string" export-name="myLoopAllowedTsmServers"/>
+    </in-binding>
+    <out-binding>
+      <bind name="outNodeJson" type="string" export-name="myJsonNodes">
+        <description><![CDATA[Die Nodes als JSON string]]></description>
+      </bind>
+    </out-binding>
+    <position y="182.68181818181816" x="324.5"/>
+  </workflow-item>
+  <workflow-item name="item5" out-name="item6" type="custom-condition" alt-out-name="item1">
+    <display-name><![CDATA[More Servers]]></display-name>
+    <script encoded="false"><![CDATA[if (myLoopCounter < myAllowedTsmServers.length) {
+	return true;
+}
+
+return false;]]></script>
+    <in-binding>
+      <bind name="myAllowedTsmServers" type="Array/string" export-name="myAllowedTsmServers"/>
+      <bind name="myLoopCounter" type="number" export-name="myLoopCounter"/>
+    </in-binding>
+    <out-binding/>
+    <position y="236.3181818181818" x="64.5"/>
+  </workflow-item>
+  <workflow-item name="item6" out-name="item2" throw-bind-name="errorCode" type="task">
+    <display-name><![CDATA[Initialize]]></display-name>
+    <script encoded="false"><![CDATA[var myLoopAllowedTsmServers = new Array(myAllowedTsmServers[myLoopCounter]);]]></script>
+    <in-binding>
+      <bind name="myAllowedTsmServers" type="Array/string" export-name="myAllowedTsmServers"/>
+      <bind name="myLoopCounter" type="number" export-name="myLoopCounter"/>
+    </in-binding>
+    <out-binding>
+      <bind name="myLoopAllowedTsmServers" type="Array/string" export-name="myLoopAllowedTsmServers"/>
+    </out-binding>
+    <position y="182.68181818181816" x="185.0"/>
+  </workflow-item>
+  <workflow-item name="item7" prototype-id="increase-counter" out-name="item5" content-mode="x" type="task">
+    <display-name><![CDATA[Increase counter]]></display-name>
+    <script encoded="false"><![CDATA[//Auto-generated script
+counter = counter+1;]]></script>
+    <in-binding>
+      <bind name="counter" type="number" export-name="myLoopCounter">
+        <description><![CDATA[counter to increment]]></description>
+      </bind>
+    </in-binding>
+    <out-binding>
+      <bind name="counter" type="number" export-name="myLoopCounter">
+        <description><![CDATA[counter incremented]]></description>
+      </bind>
+    </out-binding>
+    <description><![CDATA[Increment a counter by one]]></description>
+    <position y="246.3181818181818" x="184.5"/>
+  </workflow-item>
+  <workflow-item name="item8" out-name="item5" throw-bind-name="errorCode" type="task">
+    <display-name><![CDATA[Truncate Table]]></display-name>
+    <script encoded="false"><![CDATA[// Datenbank Verbindung aufbauen
+var myJDBCConnection = new JDBCConnection();
+var mySQLConnection	 = myJDBCConnection.getConnection("jdbc:mysql://"+mySQLServer+":"+mySQLPort+"/"+mySQLDatabase,mySQLUser,mySQLPass);
+
+// Tabelle leere, bevor alles wieder neu eingetragen wird
+var myUpdateQuery		= "TRUNCATE TABLE tsm_nodes";
+var myUpdateStatement	= mySQLConnection.prepareStatement(myUpdateQuery);
+myUpdateStatement.executeUpdate();
+
+// Tabelle leere, bevor alles wieder neu eingetragen wird
+var myUpdateQuery		= "TRUNCATE TABLE tsm_schedules";
+var myUpdateStatement	= mySQLConnection.prepareStatement(myUpdateQuery);
+myUpdateStatement.executeUpdate();
+
+mySQLConnection.close();]]></script>
+    <in-binding>
+      <bind name="mySQLUser" type="string" export-name="mySQLUser"/>
+      <bind name="mySQLPass" type="SecureString" export-name="mySQLPass"/>
+      <bind name="mySQLServer" type="string" export-name="mySQLServer"/>
+      <bind name="mySQLPort" type="string" export-name="mySQLPort"/>
+      <bind name="mySQLDatabase" type="string" export-name="mySQLDatabase"/>
+    </in-binding>
+    <out-binding/>
+    <position y="182.68181818181816" x="65.0"/>
+  </workflow-item>
+  <workflow-item name="item18" out-name="item8" type="task">
+    <display-name><![CDATA[Get-Timestamp]]></display-name>
+    <script encoded="false"><![CDATA[var myTimestamp = (Math.round((new Date()).getTime() / 1000)).toString();]]></script>
+    <in-binding/>
+    <out-binding>
+      <bind name="myTimestamp" type="string" export-name="myTimestamp"/>
+    </out-binding>
+    <position y="119.04545454545453" x="64.5"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item0" type="task" script-module="de.ww_informatik.amqp/taskScheduler_endCompleted">
+    <display-name><![CDATA[taskScheduler_endCompleted]]></display-name>
+    <script encoded="false"><![CDATA[//Auto generated script, cannot be modified !
+System.getModule("de.ww_informatik.amqp").taskScheduler_endCompleted(inTaskSchedulerRunId,inTaskSchedulerRunReturnData) ;]]></script>
+    <in-binding>
+      <bind name="inTaskSchedulerRunId" type="string" export-name="inTaskSchedulerRunId"/>
+      <bind name="inTaskSchedulerRunReturnData" type="string" export-name="NULL"/>
+    </in-binding>
+    <out-binding/>
+    <position y="309.95454545454544" x="65.0"/>
+  </workflow-item>
+  <workflow-item name="item3" throw-bind-name="errorCode" type="end" end-mode="1">
+    <in-binding/>
+    <position y="63.59090909090908" x="744.5"/>
+  </workflow-item>
+  <workflow-item name="item9" out-name="item3" type="task" script-module="de.ww_informatik.amqp/taskScheduler_endFailed">
+    <display-name><![CDATA[taskScheduler_endFailed]]></display-name>
+    <script encoded="false"><![CDATA[//Auto generated script, cannot be modified !
+System.getModule("de.ww_informatik.amqp").taskScheduler_endFailed(inTaskSchedulerRunId,inErrorMessage) ;]]></script>
+    <in-binding>
+      <bind name="inErrorMessage" type="string" export-name="errorCode"/>
+      <bind name="inTaskSchedulerRunId" type="string" export-name="inTaskSchedulerRunId"/>
+    </in-binding>
+    <out-binding/>
+    <position y="73.59090909090908" x="564.5"/>
+  </workflow-item>
+  <presentation>
+    <p-param name="inTaskSchedulerRunId">
+      <desc><![CDATA[inTaskSchedulerRunId]]></desc>
+    </p-param>
+  </presentation>
+</workflow>

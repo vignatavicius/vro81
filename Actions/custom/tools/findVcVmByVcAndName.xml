@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="findVcVmByVcAndName" result-type="VC:VirtualMachine" api-version="6.0.0" id="1426f59b-5e9e-41d3-966d-170dd4ddc127" version="0.0.0" allowed-operations="vfe" category-name="custom.tools">
+  <param n="vCenterUuid" t="string"/>
+  <param n="vmName" t="string"/>
+  <script encoded="false"><![CDATA[System.log("Trying to resolve a vCenter VM with name " + vmName + " in vCenter with UUID " + vCenterUuid);
+
+var sdkConnection = VcPlugin.findSdkConnectionForUUID(vCenterUuid);
+if (!sdkConnection){
+	throw "No vCenter host configuration found with ID " + vCenterUuid;
+}
+
+var vCenterVm = null;
+try {
+	vCenterVm = sdkConnection.searchIndex.findByDnsName(null, vmName, true);
+} catch(e) {
+	System.log("Unable to find VM by instance Name :" + vmName + ", for SDK connection " + sdkConnection.name + ", reason : " + e);
+    try {
+    	vCenterVm = sdkConnection.searchIndex.findByDnsName(null, vmName, false);
+    } catch(e) {
+    	System.log("Unable to find VM by instance Name :" + vmName + ", for SDK connection " + sdkConnection.name + ", reason : " + e);
+    }
+}
+
+if (vCenterVm != null) {
+   System.log("Resolved vCenter VM " + vCenterVm.name);
+} else {
+   throw "Virtual Machine with Name " + vmName + " is not found";
+}
+
+return vCenterVm;]]></script>
+</dunes-script-module>

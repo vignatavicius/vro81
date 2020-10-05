@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<package>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Workflow?id='d6988b4b-a0d3-410c-ba6a-1c7195ee9095'&dunesName='Workflow']]></elm>
+<used-plugin name='VC' version='6.5.0' />
+</package>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<package>
+<description><![CDATA[]]></description>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Workflow?id='d93f3cf7-51ed-471a-8209-a50376591315'&dunesName='Workflow']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='40d2d8d4-c70e-425b-b47a-25f854e891f0'&dunesName='Action'&name='getVCClusterCompute'&category='com.vmware.library.vc.cluster']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='49dc46f4-7526-4c5f-8676-e66c04b67e66'&dunesName='Action'&name='getFreeDatastore'&category='com.vmware.library.vc.datastore']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='bf3733a2-1935-4e58-b929-808aa8559da9'&dunesName='Action'&name='getClusterResourcePool'&category='com.vmware.library.vc.resourcePool']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='1eec5635-c80c-4816-8efd-90115eb37206'&dunesName='Action'&name='clusterPickHost'&category='com.vmware.library.vc.cluster']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='f4713a5e-a1b2-4b0f-9306-965cdce9e45f'&dunesName='Action'&name='isSupportedNic'&category='com.vmware.library.vc.vm.network']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Workflow?id='90808080808080808080808080808080D28080800120523434428525559a3425f'&dunesName='Workflow']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='c077250f-9b49-44a3-8062-7ec501f6e05b'&dunesName='Action'&name='vim3WaitTaskEnd'&category='com.vmware.library.vc.basic']]></elm>
+<used-plugin name='VC' version='6.0.2' />
+</package>

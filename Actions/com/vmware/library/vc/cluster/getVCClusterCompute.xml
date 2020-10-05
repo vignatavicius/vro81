@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getVCClusterCompute" result-type="Array/Any" api-version="6.0.0" id="40d2d8d4-c70e-425b-b47a-25f854e891f0" version="0.0.0" allowed-operations="vfe" category-name="com.vmware.library.vc.cluster">
+  <param n="vc" t="VC:SdkConnection"/>
+  <script encoded="false"><![CDATA[var clusters = new Array();
+//clusters = vc.getAllComputeResources();
+clusters = vc.getAllClusterComputeResources();
+return clusters;]]></script>
+</dunes-script-module>

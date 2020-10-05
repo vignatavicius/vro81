@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<package>
+<description><![CDATA[Copyrights by W&W Informatik GmbH.
+Delete all provided content after troubleshooting for SR20147193508 is finished.]]></description>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Workflow?id='4ecb643c-69ee-4879-b195-c7906267a78c'&dunesName='Workflow']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Workflow?id='bbacf8c7-d6b9-43d2-b65d-54abe0e67fc4'&dunesName='Workflow']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='4b1cddfc-dde0-413a-b48f-55de7af85ff2'&dunesName='Action'&name='getNode'&category='de.ww_informatik.tsm']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='fd9f26e9-3741-4863-979d-78d7b73da56d'&dunesName='Action'&name='executeRestRequest'&category='de.ww_informatik.tsm']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='f9dcda42-d0ef-4ec8-801f-68bd937f157c'&dunesName='Action'&name='wwiGetConfigurationAttributeByName'&category='de.ww_informatik.functions']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='cdc226f1-1e6e-4f9d-982a-0bf0c0dc68c6'&dunesName='Action'&name='issueCommand'&category='de.ww_informatik.tsm']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='06d5f8c8-8576-4198-83e0-98082b8eec76'&dunesName='Action'&name='executeRestRequestCliCommand'&category='de.ww_informatik.tsm']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='750a2229-940c-459d-aee3-7ee0d7435375'&dunesName='Action'&name='getNodeSchedules'&category='de.ww_informatik.tsm']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='8e243427-d836-4181-abde-4c55c1e7f9d8'&dunesName='Action'&name='taskScheduler_endCompleted'&category='de.ww_informatik.amqp']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='f254ece4-f660-4d31-80ff-8c0c46359200'&dunesName='Action'&name='taskScheduler_endFailed'&category='de.ww_informatik.amqp']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/ConfigurationElement?id='d509ac3c-2c1b-435b-af6d-99b58b0ca124'&dunesName='ConfigurationElement']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/ConfigurationElement?id='883b8d83-4f54-4405-b8b4-5100644b97c1'&dunesName='ConfigurationElement']]></elm>
+</package>

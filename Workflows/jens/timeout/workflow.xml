@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:workflow xmlns:ns2="http://vmware.com/vco/workflow" root-name="item1" object-name="workflow:name=generic" id="800e1b43-44a6-4801-a248-8cb5e45c9bd5" editor-version="2.0" version="0.0.1" api-version="6.0.0" restartMode="1" resumeFromFailedMode="0">
+    <display-name>timeout</display-name>
+    <position y="50.0" x="100.0"/>
+    <input/>
+    <output/>
+    <attrib name="wait2" type="Date">
+        <value encoded="n"/>
+    </attrib>
+    <attrib name="minutes2wait" type="number">
+        <value encoded="n">45.0</value>
+    </attrib>
+    <workflow-item name="item0" type="end" end-mode="0" comparator="0">
+        <in-binding/>
+        <out-binding/>
+        <position y="50.0" x="485.0"/>
+    </workflow-item>
+    <workflow-item name="item1" out-name="item2" type="task" comparator="0">
+        <display-name>Scriptable task</display-name>
+        <script encoded="false">var dt = new Date();&#13;
+dt.setMinutes( dt.getMinutes() + minutes2wait );&#13;
+wait2=dt;&#13;
+System.log ("Waiting until:"+wait2);</script>
+        <in-binding>
+            <bind name="minutes2wait" type="number" export-name="minutes2wait"/>
+        </in-binding>
+        <out-binding>
+            <bind name="wait2" type="Date" export-name="wait2"/>
+        </out-binding>
+        <description>Simple task with custom script capability.</description>
+        <position y="60.0" x="140.0"/>
+    </workflow-item>
+    <workflow-item name="item2" out-name="item3" type="waiting-timer" comparator="0">
+        <display-name>Waiting timer</display-name>
+        <script></script>
+        <in-binding>
+            <bind name="timer.date" type="Date" export-name="wait2">
+                <description>This timer item will wait until date and will continue workflow execution.</description>
+            </bind>
+        </in-binding>
+        <out-binding/>
+        <position y="50.0" x="285.0"/>
+    </workflow-item>
+    <workflow-item name="item3" out-name="item0" type="task" comparator="0">
+        <display-name>Scriptable task</display-name>
+        <script encoded="false">System.log("End Workflow")</script>
+        <in-binding/>
+        <out-binding/>
+        <description>Simple task with custom script capability.</description>
+        <position y="60.0" x="340.0"/>
+    </workflow-item>
+    <presentation/>
+</ns2:workflow>

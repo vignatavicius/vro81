@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getNode" result-type="string" api-version="6.0.0" id="4b1cddfc-dde0-413a-b48f-55de7af85ff2" version="1.0.1" allowed-operations="evf" category-name="de.ww_informatik.tsm">
+  <description><![CDATA[Return all TSM-Server including Details (Request URL: /servers/<SERVERNAME>/details)]]></description>
+  <param n="nodeName" t="string"><![CDATA[<optional>Name of the TSM Node (otherwise all Nodes will be received)]]></param>
+  <param n="allowedServers" t="Array/string"><![CDATA[<optional>Allowed Servers]]></param>
+  <param n="allowedDomains" t="Array/string"><![CDATA[<optional>Allowed Domains]]></param>
+  <script encoded="false"><![CDATA[var url = "clients";
+var httpMethod = "GET";
+var content = "";
+var ClientResponse = JSON.parse(System.getModule("de.ww_informatik.tsm").executeRestRequest(url,httpMethod, content));
+
+// Array für Rückgabe
+var myNodes = new Array();
+
+// Alle Nodenamen durchgehen
+for each ( var myClient in ClientResponse.clients ) {
+
+	if (allowedServers && allowedServers.length > 0 && allowedServers.indexOf(myClient.SERVER) == -1) {
+		continue;
+	}
+
+	if (allowedDomains && allowedDomains.length > 0 && allowedDomains.indexOf(myClient.DOMAIN) == -1) {
+		continue;
+	}
+
+	// Wenn nach einem speziellen gesucht wird, nur diesen auswählen
+	if (nodeName && myClient.NAME.toString().toUpperCase() == nodeName.toUpperCase()) {	
+		return JSON.stringify(myClient);
+	}
+	
+	// Ansonsten jeden Node zur Ausgabe hinzufügen
+	if (!nodeName) {
+		// Nur aktive Nodes in die Datenbank lesen
+		if (myClient.LOCKED == 0) {
+			myNodes.push(myClient);
+		}
+	}
+}
+
+// Wenn Nodenamen nicht gefunden
+if (nodeName) {
+	return null;
+}
+
+return JSON.stringify(myNodes);]]></script>
+</dunes-script-module>

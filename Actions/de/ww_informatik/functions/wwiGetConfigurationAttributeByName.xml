@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="wwiGetConfigurationAttributeByName" result-type="Any" api-version="6.0.0" id="f9dcda42-d0ef-4ec8-801f-68bd937f157c" version="1.0.1" allowed-operations="evf" category-name="de.ww_informatik.functions">
+  <param n="inConfigurationCategory" t="string"><![CDATA[Name des Ordners]]></param>
+  <param n="inConfigurationElementName" t="string"><![CDATA[Name of the configuration element]]></param>
+  <param n="inAttributeName" t="string"><![CDATA[Name of the attribute]]></param>
+  <script encoded="false"><![CDATA[// Alle Configuration-Categories (also Ordner) auslesen
+var myConfigurationElementCategory = Server.getAllConfigurationElementCategories()
+// Jedes Category-Element durchgehen
+for each (var myConfigElementCategory in myConfigurationElementCategory) {
+	// Wenn die richtige gefunden wurde, werden alle Configuration Elements ausgelsesn
+	if(myConfigElementCategory.name == inConfigurationCategory) {
+		var myConfigurationElements = myConfigElementCategory.allConfigurationElements;
+		// Jeses Configuration-Element durchgehen
+		for each ( var myConfiguration in myConfigurationElements) {
+			// Ergebnis zurückgeben, wenn das Richtige Configuration-Element gefunden wurde
+			if(myConfiguration.name == inConfigurationElementName) {
+				try {
+					var myAttributeValue = myConfiguration.getAttributeWithKey(inAttributeName).value;
+					return myAttributeValue;
+				}
+				catch (ex) {
+					throw "Error: " + ex; 
+				}
+			}
+		}
+	}
+}
+// Fehler ausgeben, da Attribute noch nicht vom Skript zurückgegeben wurde
+throw "Attribute " + inAttributeName + " was not found in Configuration '" + inConfigurationCategory + "\\" + inConfigurationElementName + "'"; ]]></script>
+</dunes-script-module>

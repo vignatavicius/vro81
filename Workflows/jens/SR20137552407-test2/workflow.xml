@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:workflow xmlns:ns2="http://vmware.com/vco/workflow" root-name="item1" object-name="workflow:name=generic" id="910f43dc-82fd-4680-b016-e1783f094789" editor-version="2.0" version="0.0.1" api-version="6.0.0" allowed-operations="vef" restartMode="1" resumeFromFailedMode="0">
+    <display-name>SR20137552407-test2</display-name>
+    <description>SR 20137552407
+https://communities.vmware.com/thread/633354</description>
+    <position y="50.0" x="100.0"/>
+    <input>
+        <param name="input" type="Array/Properties"/>
+    </input>
+    <output>
+        <param name="data" type="Array/Properties"/>
+    </output>
+    <workflow-item name="item0" type="end" end-mode="0" comparator="0">
+        <in-binding/>
+        <out-binding/>
+        <position y="50.42588623686588" x="391.99142716303"/>
+    </workflow-item>
+    <workflow-item name="item1" out-name="item0" type="task" comparator="0">
+        <display-name>Scriptable task</display-name>
+        <script encoded="false"></script>
+        <in-binding>
+            <bind name="input" type="Array/Properties" export-name="input"/>
+        </in-binding>
+        <out-binding/>
+        <description>Simple task with custom script capability.</description>
+        <position y="60.5" x="200.0"/>
+    </workflow-item>
+    <presentation/>
+</ns2:workflow>

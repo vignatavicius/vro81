@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="taskScheduler_endFailed" result-type="void" api-version="6.0.0" id="f254ece4-f660-4d31-80ff-8c0c46359200" version="1.0.0" allowed-operations="evf" category-name="de.ww_informatik.amqp">
+  <param n="inTaskSchedulerRunId" t="string"/>
+  <param n="inErrorMessage" t="string"/>
+  <script encoded="false"><![CDATA[var msgObject = {};
+msgObject.taskSchedulerRunId = inTaskSchedulerRunId;
+msgObject.taskSchedulerRunStatus = "failed";
+msgObject.taskSchedulerRunReturnData = {};
+msgObject.taskSchedulerRunReturnData.workflowRunId = workflow.id;
+msgObject.taskSchedulerRunReturnData.errorMessage = inErrorMessage;
+
+var msg = new AMQPMessage();
+msg.bodyAsText = JSON.stringify(msgObject);
+
+var AmqpBroker = System.getModule("de.ww_informatik.functions").wwiGetConfigurationAttributeByName("wwi","wwi_sfatz","amqpBroker");
+if (AmqpBroker == null) { throw "amqpBroker not found in configuration wwi/wwi.sfatz!"; }
+AmqpBroker.send("", "taskScheduler", msg);]]></script>
+</dunes-script-module>

@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<config-element id="d509ac3c-2c1b-435b-af6d-99b58b0ca124" version="3.0.0">
+  <display-name><![CDATA[wwi_sfatz]]></display-name>
+  <description><![CDATA[Eigenschaften für die Benutzung der SINdb]]></description>
+  <atts>
+    <att name="sqlServer" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+      <description><![CDATA[Datenbankserver]]></description>
+    </att>
+    <att name="sqlUser" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+      <description><![CDATA[User für Datenbankserver]]></description>
+    </att>
+    <att name="sqlPass" type="SecureString" read-only="false">
+      <description><![CDATA[Password für Datenbankserver]]></description>
+    </att>
+    <att name="sqlDB" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+      <description><![CDATA[Datenbank auf Server]]></description>
+    </att>
+    <att name="sqlObject" type="SQL:Database" read-only="false">
+      <description><![CDATA[Datenbankobjekt]]></description>
+    </att>
+    <att name="sqlPort" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+      <description><![CDATA[Port für Datenbankserver]]></description>
+    </att>
+    <att name="sqlDBvmwareOrder" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+      <description><![CDATA[Datenbank für Bestellungen]]></description>
+    </att>
+    <att name="amqpBroker" type="AMQP:Broker" read-only="false">
+      <description><![CDATA[AMQP Broker für Queue-Subscriptions]]></description>
+    </att>
+    <att name="sqlDBaixOrder" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+      <description><![CDATA[Datenbank für AIX Bestellungen]]></description>
+    </att>
+    <att name="sqlDBaixDecomissioning" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+      <description><![CDATA[Datenbank für AIX Ausserbetriebnahme]]></description>
+    </att>
+    <att name="url" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+      <description><![CDATA[URL zur Seite]]></description>
+    </att>
+    <att name="blueprintOrderAixIPAddress" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+      <description><![CDATA[ID des Blueprints für Bestellen von AIX IP Adresses]]></description>
+    </att>
+    <att name="blueprintOrderAixSanLuns" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+      <description><![CDATA[ID des Blueprints für Bestellen von SAN LUNs]]></description>
+    </att>
+    <att name="blueprintOrderAixTsmNode" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+      <description><![CDATA[ID des Blueprints für Bestellen eines TSM Nodes]]></description>
+    </att>
+    <att name="blueprintOrderAixIPAddressDecommissioning" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+      <description><![CDATA[ID des Blueprints für Decommissioning von AIX IP Adresses]]></description>
+    </att>
+    <att name="blueprintOrderAixSanLunsDecommissioning" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+      <description><![CDATA[ID des Blueprints für Decommissioning von AIX SAN LUNs]]></description>
+    </att>
+    <att name="blueprintOrderAixTsmNodeDecommissioning" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+      <description><![CDATA[ID des Blueprints für Decommissioning eines TSM Nodes]]></description>
+    </att>
+    <att name="workflowStepAixAddOrExtendSanLunsManu" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+      <description><![CDATA[ID des Steps für das manuelle hinzufuegen oder erweitern von SAN Platten]]></description>
+    </att>
+    <att name="workflowStepAixAddOrExtendSanLunsVro" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+      <description><![CDATA[ID des Steps für das Starten eines vRO Workflows, welcher neue Platten zu einer VG hinzufuegt]]></description>
+    </att>
+    <att name="vCenterPermissionRoleName" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+      <description><![CDATA[Name der vCenter Permission-Rolle für neue Berechtigungen]]></description>
+    </att>
+    <att name="activeDirectoryHost" type="AD:AdHost" read-only="false">
+      <description><![CDATA[AD-Host der ww-intern.de]]></description>
+    </att>
+    <att name="adminHostLinux" type="VC:VirtualMachine" read-only="false">
+      <description><![CDATA[Admin Host Linux]]></description>
+    </att>
+    <att name="adJoinLinuxUser" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+      <description><![CDATA[AD-User für Domain Join]]></description>
+    </att>
+    <att name="adJoinLinuxPass" type="SecureString" read-only="false">
+      <description><![CDATA[AD-User-Passwort für Domain Join]]></description>
+    </att>
+    <att name="RestHost" type="REST:RESTHost" read-only="false">
+      <description><![CDATA[SINdb Rest Host]]></description>
+    </att>
+    <att name="testSqlServer" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+    </att>
+    <att name="testSqlUser" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+    </att>
+    <att name="testSqlPass" type="SecureString" read-only="false"/>
+    <att name="testSqlDB" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+    </att>
+    <att name="testSqlPort" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+    </att>
+    <att name="configuredVroPlugins" type="Array/string" read-only="false">
+      <description><![CDATA[Konfigurierte vRO-Plugins]]></description>
+    </att>
+    <att name="vroAlias" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+      <description><![CDATA[Alias usable for mail subjects]]></description>
+    </att>
+    <att name="sindbApiHost" type="REST:RESTHost" read-only="false">
+      <description><![CDATA[REST Host der SINdb API]]></description>
+    </att>
+    <att name="sindbApiUser" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+      <description><![CDATA[Benutzer der API]]></description>
+    </att>
+    <att name="sindbApiPass" type="SecureString" read-only="false">
+      <description><![CDATA[Passwort der API]]></description>
+    </att>
+    <att name="sindbServiceAccount" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+      <description><![CDATA[Service-Account SINdb]]></description>
+    </att>
+    <att name="sindbServiceAccountPass" type="SecureString" read-only="false">
+      <description><![CDATA[Service-Account SINdb Passwort]]></description>
+    </att>
+  </atts>
+</config-element>

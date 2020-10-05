@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getFreeDatastore" result-type="VC:Datastore" api-version="6.0.0" id="49dc46f4-7526-4c5f-8676-e66c04b67e66" version="0.0.0" allowed-operations="vfe" category-name="com.vmware.library.vc.datastore">
+  <param n="cluster" t="VC:ClusterComputeResource"/>
+  <script encoded="false"><![CDATA[
+var dsFree = new Array();
+var free = {};
+var ds = cluster.datastore
+
+for each (var i in ds){
+	//System.log(i.host.length)
+	if (i.host.length > 10){
+		if (i.summary.type != "NFS"){
+		//System.log(i.name + " : " + i.info.freeSpace)
+	dsFree.push(i)}
+		}
+	}	
+
+var dsFree = dsFree.slice(0);
+dsFree.sort(function(a,b) {
+    return a.info.freeSpace - b.info.freeSpace;
+});
+//System.log(bySize);
+var dsFree = dsFree.reverse();
+//System.log(dsFree[0].name + " : " + dsFree[0].info.freeSpace)
+return dsFree[0]
+]]></script>
+</dunes-script-module>

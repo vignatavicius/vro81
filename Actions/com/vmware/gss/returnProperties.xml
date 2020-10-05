@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="returnProperties" result-type="Array/Properties" api-version="6.0.0" id="c3375034-2078-4ee0-bf38-c45211c6597b" version="0.0.1" category-name="com.vmware.gss">
+  <description><![CDATA[SR 20137552407
+https://communities.vmware.com/thread/633354]]></description>
+  <script encoded="false"><![CDATA[return [
+    {
+        id: 0,
+        name: "Name1"
+    },
+    {
+        id: 1,
+        name: "Name2"
+    }
+]]]></script>
+</dunes-script-module>

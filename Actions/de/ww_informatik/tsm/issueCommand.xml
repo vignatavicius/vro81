@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="issueCommand" result-type="string" api-version="6.0.0" id="cdc226f1-1e6e-4f9d-982a-0bf0c0dc68c6" version="1.0.0" allowed-operations="evf" category-name="de.ww_informatik.tsm">
+  <description><![CDATA[Returns the Name of the Scheduler with the most free slots for the specified Server / Domain]]></description>
+  <param n="tsmServer" t="string"/>
+  <param n="tsmCommand" t="string"/>
+  <script encoded="false"><![CDATA[var url = "cli/issueCommand/" + tsmServer.toUpperCase();
+var httpMethod = "POST";
+var content = tsmCommand;
+
+var RESTResponse = System.getModule("de.ww_informatik.tsm").executeRestRequestCliCommand(url,httpMethod, content);
+
+return RESTResponse;]]></script>
+</dunes-script-module>

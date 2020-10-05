@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="executeRestRequestCliCommand" result-type="string" api-version="6.0.0" id="06d5f8c8-8576-4198-83e0-98082b8eec76" version="1.0.0" allowed-operations="evf" category-name="de.ww_informatik.tsm">
+  <description><![CDATA[Execute a REST Request on the Gravity Zone REST Host]]></description>
+  <param n="url" t="string"><![CDATA[Last Part of the REST URL]]></param>
+  <param n="httpMethod" t="string"><![CDATA[HTTP Method (POST, GET...)]]></param>
+  <param n="content" t="string"><![CDATA[Content / Body as JSON]]></param>
+  <script encoded="false"><![CDATA[// Get REST Host from Config
+var RESTHost = System.getModule("de.ww_informatik.functions").wwiGetConfigurationAttributeByName("wwi","wwi_tsm","RestHost");
+if (RESTHost == null) { throw "REST Host not found in configuration wwi/wwi.tsm!"; }
+
+// Create new Request
+var RESTRequest = RESTHost.createRequest(httpMethod, url, content);
+
+// Initialize Request Attributes
+RESTRequest.setHeader("OC-API-Version","1.0");
+RESTRequest.setHeader("Accept","application/json");
+
+// Execute the request
+var RESTResponse = RESTRequest.execute();
+
+// Return the Result from the request
+return RESTResponse.contentAsString;]]></script>
+</dunes-script-module>

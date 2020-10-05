@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<config-element id="883b8d83-4f54-4405-b8b4-5100644b97c1" version="2.0.2">
+  <display-name><![CDATA[wwi_tsm]]></display-name>
+  <atts>
+    <att name="RestHost" type="REST:RESTHost" read-only="false"/>
+    <att name="TsmServersDatabase" type="Array/string" read-only="false"/>
+    <att name="TsmServersExchange" type="Array/string" read-only="false"/>
+    <att name="TsmServersOthers" type="Array/string" read-only="false"/>
+    <att name="TsmDomain" type="string" read-only="false">
+      <value encoded="n"><![CDATA[]]></value>
+    </att>
+    <att name="AllowedTSMServers" type="Array/string" read-only="false"/>
+  </atts>
+</config-element>

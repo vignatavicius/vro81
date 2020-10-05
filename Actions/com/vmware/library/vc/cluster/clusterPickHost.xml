@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="clusterPickHost" result-type="VC:HostSystem" api-version="6.0.0" id="1eec5635-c80c-4816-8efd-90115eb37206" version="0.0.0" allowed-operations="vfe" category-name="com.vmware.library.vc.cluster">
+  <param n="cluster" t="VC:ClusterComputeResource"/>
+  <script encoded="false"><![CDATA[var hosts = cluster.host;
+hosts.sort(function() {return 0.5 - Math.random()})
+var random = hosts.sort(function() {return 0.5 - Math.random()})[0];
+return random]]></script>
+</dunes-script-module>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<package>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Workflow?id='3f8ea325-41e8-4378-a9cb-209e93bdb903'&dunesName='Workflow']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Action?id='1426f59b-5e9e-41d3-966d-170dd4ddc127'&dunesName='Action'&name='findVcVmByVcAndName'&category='custom.tools']]></elm>
+<used-plugin name='VC' version='6.5.0' />
+</package>

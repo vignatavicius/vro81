@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getNodeSchedules" result-type="string" api-version="6.0.0" id="750a2229-940c-459d-aee3-7ee0d7435375" version="1.0.0" allowed-operations="evf" category-name="de.ww_informatik.tsm">
+  <description><![CDATA[Verify if the specified Domain exists for the specified Server. Return true or false]]></description>
+  <param n="domainName" t="string"><![CDATA[Name der TSM Domäne]]></param>
+  <param n="serverName" t="string"><![CDATA[Name des TSM Servers]]></param>
+  <param n="clientName" t="string"><![CDATA[Name des TSM Nodes]]></param>
+  <script encoded="false"><![CDATA[if(!domainName ||!serverName || !clientName) throw "Missing domainName or serverName";
+
+var url = "servers/" + serverName.toUpperCase() + "/domains/" + domainName.toUpperCase() + "/clients/" + clientName.toUpperCase() + "/schedules";
+var httpMethod = "GET";
+var content = "";
+return System.getModule("de.ww_informatik.tsm").executeRestRequest(url,httpMethod, content);
+]]></script>
+</dunes-script-module>

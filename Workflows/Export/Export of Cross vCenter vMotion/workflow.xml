@@ -1,0 +1,426 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item2" object-name="workflow:name=generic" id="d93f3cf7-51ed-471a-8209-a50376591315" version="0.0.8" api-version="6.0.0" allowed-operations="evf" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Export of Cross vCenter vMotion]]></display-name>
+  <position y="45.40909090909091" x="25.0"/>
+  <input>
+    <param name="vm" type="VC:VirtualMachine"/>
+    <param name="targetVC" type="VC:SdkConnection"/>
+    <param name="targetCluster" type="VC:ClusterComputeResource"/>
+    <param name="targetDatastore" type="VC:Datastore"/>
+    <param name="targetResourcePool" type="VC:ResourcePool"/>
+    <param name="targetHost" type="VC:HostSystem"/>
+  </input>
+  <output>
+    <param name="actionResult" type="Any"/>
+  </output>
+  <attrib name="username" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+    <description><![CDATA[vCenter user with permissions to perform migration]]></description>
+  </attrib>
+  <attrib name="password" type="SecureString" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+    <description><![CDATA[vCenter password with permissions to perform migration]]></description>
+  </attrib>
+  <attrib name="targetVCname" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+  </attrib>
+  <attrib name="cmd" type="string" read-only="false">
+    <value encoded="n"><![CDATA[echo -n | openssl s_client -connect 127.0.0.1:443 2>/dev/null | openssl x509 -noout -fingerprint -sha1]]></value>
+    <description><![CDATA[The SSH command to run]]></description>
+  </attrib>
+  <attrib name="passwordAuthentication" type="boolean" read-only="false">
+    <value encoded="n"><![CDATA[true]]></value>
+    <description><![CDATA[Sets authentication to password or key file]]></description>
+  </attrib>
+  <attrib name="result" type="number" read-only="false">
+    <description><![CDATA[0 = OK, Negative = Error, Positive = Number of values returned, after error text]]></description>
+  </attrib>
+  <attrib name="errorText" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+    <description><![CDATA[Error text, if any]]></description>
+  </attrib>
+  <attrib name="outputText" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+    <description><![CDATA[Result of running the SSH command]]></description>
+  </attrib>
+  <attrib name="sshUser" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+    <description><![CDATA[vCenter SSH Logon User (ex root)]]></description>
+  </attrib>
+  <attrib name="sshPassword" type="SecureString" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+    <description><![CDATA[vCenter SSH Logon Password]]></description>
+  </attrib>
+  <attrib name="sslThumbprint" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+  </attrib>
+  <attrib name="errorCode" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+  </attrib>
+  <attrib name="output" type="Any" read-only="false">
+    <value encoded="n"><![CDATA[string#<<null>>]]></value>
+  </attrib>
+  <attrib name="vNetworking" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+  </attrib>
+  <attrib name="vNicTotal" type="number" read-only="false">
+    <value encoded="n"><![CDATA[__NULL__]]></value>
+  </attrib>
+  <attrib name="workProps" type="Properties" read-only="false">
+    <value encoded="n"><![CDATA[__NULL__]]></value>
+  </attrib>
+  <attrib name="relocateVmTask" type="VC:Task" read-only="false">
+    <value encoded="n"><![CDATA[__NULL__]]></value>
+  </attrib>
+  <attrib name="progress" type="boolean" read-only="false">
+    <value encoded="n"><![CDATA[true]]></value>
+    <description><![CDATA[Log progess while waiting for the task]]></description>
+  </attrib>
+  <attrib name="pollRate" type="number" read-only="false">
+    <value encoded="n"><![CDATA[1.0]]></value>
+    <description><![CDATA[Polling rate for the task state [seconds]]]></description>
+  </attrib>
+  <workflow-item  name="item0" type="end" end-mode="0">
+    <position y="45.40909090909091" x="1104.5"/>
+  </workflow-item >
+  <workflow-item  name="item1" out-name="item9" throw-bind-name="errorCode" type="task">
+    <display-name><![CDATA[Migrate]]></display-name>
+    <script encoded="false"><![CDATA[//--> Declare some variables
+var vmspec = new VcVirtualMachineConfigSpec(); // Builds config spec object for VirtualMachine
+var nicArray = new Array(); // Array holds each of the nic configurations (devicespecs)
+var nic = new VcVirtualEthernetCardDistributedVirtualPortBackingInfo(); // NIC configuration spec and backing info
+var port = new VcDistributedVirtualSwitchPortConnection(); // Port Connection details for dvSwitch backing
+var nck0001sslThumbprint = "‎16:cf:b7:e0:6d:9b:a9:4e:86:c2:8c:52:bf:d4:d6:63:2f:5f:b8:ee";
+var nck0002sslThumbprint = "‎79:55:89:37:8e:d1:db:08:6c:92:7b:b1:ba:57:47:58:ff:9e:9e:8b";
+
+//--> Service locator for migration
+var serviceLocator = new VcServiceLocator();  
+serviceLocator.credential = new VcServiceLocatorNamePassword();  
+serviceLocator.credential.username = username;  
+serviceLocator.credential.password = password;  
+serviceLocator.instanceUuid = targetVC.about.instanceUuid; //targetVCInstanceUUID;  
+serviceLocator.sslThumbprint = sslThumbprint;  
+serviceLocator.url = targetVC.name; //url;  
+ 
+//--> Create relocation specification  
+var relocateSpec = new VcVirtualMachineRelocateSpec();  
+relocateSpec.datastore = new VcManagedObjectReference();  
+relocateSpec.datastore.type = "Datastore";  
+relocateSpec.datastore.value = targetDatastore.id; //targetDatastoreMoId;  
+//--> Create Object Reference for resource pool  
+relocateSpec.pool = new VcManagedObjectReference();  
+relocateSpec.pool.type = "ResourcePool";  
+relocateSpec.pool.value = targetResourcePool.id //targetResourcePoolMoId;  
+//--> Create object reference to the target host    
+relocateSpec.host = new VcManagedObjectReference();  
+relocateSpec.host.type = "HostSystem";  
+relocateSpec.host.value = targetHost.id //targetHostMoId;  
+
+//-- Parse Values passed
+var content = JSON.parse(vNetworking);
+for each ( var i in content ){
+	var nicNumber = new Number()
+	nicNumber = i.vNic
+	var specNum = nicNumber*1-1
+	//System.log("specNum : " + specNum)
+	var dvPortgroup = workProps.get("dvPortgroup");
+	}
+	
+var dvSwitch = VcPlugin.convertToVimManagedObject(dvPortgroup, dvPortgroup.config.distributedVirtualSwitch);
+port.switchUuid = dvSwitch.uuid;
+port.portgroupKey = dvPortgroup.key;
+nic.port = port;	  
+var devices = vm.config.hardware.device;  
+var arr = [];
+var actualPos = 0;  
+arr.push (new VcVirtualDeviceConfigSpec());  
+relocateSpec.deviceChange = arr;  
+relocateSpec.deviceChange[0] = new VcVirtualDeviceConfigSpec();  
+relocateSpec.deviceChange[0].operation = VcVirtualDeviceConfigSpecOperation.edit; 
+//--> Loop through devices 
+for (var i in devices) {  
+  if (System.getModule("com.vmware.library.vc.vm.network").isSupportedNic(devices[i])) {  
+  //System.log(vcNetwork);
+  var backing = devices[i].backing;  
+  relocateSpec.deviceChange[0].device = devices[i];  
+  relocateSpec.deviceChange[0].device.backing = nic;  
+  }  
+}  
+  
+//--> Perform Migration  
+relocateSpec.service = serviceLocator;  
+System.log("Start migration of VM " + vm);  
+relocateVmTask = vm.relocateVM_Task(relocateSpec);  
+]]></script>
+    <in-binding>
+      <bind name="username" type="string" export-name="username"/>
+      <bind name="password" type="SecureString" export-name="password"/>
+      <bind name="targetVC" type="VC:SdkConnection" export-name="targetVC"/>
+      <bind name="targetDatastore" type="VC:Datastore" export-name="targetDatastore"/>
+      <bind name="targetResourcePool" type="VC:ResourcePool" export-name="targetResourcePool"/>
+      <bind name="targetHost" type="VC:HostSystem" export-name="targetHost"/>
+      <bind name="vm" type="VC:VirtualMachine" export-name="vm"/>
+      <bind name="sslThumbprint" type="string" export-name="sslThumbprint"/>
+      <bind name="vNetworking" type="string" export-name="vNetworking"/>
+      <bind name="workProps" type="Properties" export-name="workProps"/>
+    </in-binding>
+    <out-binding>
+      <bind name="relocateVmTask" type="VC:Task" export-name="relocateVmTask"/>
+    </out-binding>
+    <position y="55.40909090909091" x="784.5"/>
+  </workflow-item >
+  <workflow-item  name="item2" out-name="item3" type="task">
+    <display-name><![CDATA[target VC Name]]></display-name>
+    <script encoded="false"><![CDATA[var targetVCname = targetVC.name.replace("https://","").replace(":443/sdk","")
+System.log(targetVCname)
+]]></script>
+    <in-binding>
+      <bind name="targetVC" type="VC:SdkConnection" export-name="targetVC"/>
+    </in-binding>
+    <out-binding>
+      <bind name="targetVCname" type="string" export-name="targetVCname"/>
+    </out-binding>
+    <position y="55.40909090909091" x="124.5"/>
+  </workflow-item >
+  <workflow-item  name="item3" out-name="item7" type="link" linked-workflow-id="90808080808080808080808080808080D28080800120523434428525559a3425f">
+    <display-name><![CDATA[Run SSH command]]></display-name>
+    <in-binding>
+      <bind name="hostNameOrIP" type="string" export-name="targetVCname">
+        <description><![CDATA[Hostname or IP address of the SSH host]]></description>
+      </bind>
+      <bind name="port" type="number" explicitly-not-bound="true">
+        <description><![CDATA[Target port]]></description>
+      </bind>
+      <bind name="username" type="string" export-name="sshUser">
+        <description><![CDATA[Username]]></description>
+      </bind>
+      <bind name="password" type="SecureString" export-name="sshPassword">
+        <description><![CDATA[Password]]></description>
+      </bind>
+      <bind name="cmd" type="string" export-name="cmd">
+        <description><![CDATA[The SSH command to run]]></description>
+      </bind>
+      <bind name="passwordAuthentication" type="boolean" export-name="passwordAuthentication">
+        <description><![CDATA[Sets authentication to password or key file]]></description>
+      </bind>
+      <bind name="path" type="Path" explicitly-not-bound="true">
+        <description><![CDATA[Path to the private key]]></description>
+      </bind>
+      <bind name="passphrase" type="SecureString" explicitly-not-bound="true">
+        <description><![CDATA[Private key pass-phrase]]></description>
+      </bind>
+      <bind name="encoding" type="string" explicitly-not-bound="true">
+        <description><![CDATA[The encoding to be used. Leave this field empty to use the default system encoding. (Example values: "UTF-8", "ISO-8859-1"...)]]></description>
+      </bind>
+    </in-binding>
+    <out-binding>
+      <bind name="result" type="number" export-name="result">
+        <description><![CDATA[0 = OK, Negative = Error, Positive = Number of values returned, after error text]]></description>
+      </bind>
+      <bind name="errorText" type="string" export-name="errorText">
+        <description><![CDATA[Error text, if any]]></description>
+      </bind>
+      <bind name="outputText" type="string" export-name="outputText">
+        <description><![CDATA[Result of running the SSH command]]></description>
+      </bind>
+    </out-binding>
+    <description><![CDATA[Runs an SSH command.]]></description>
+    <position y="55.40909090909091" x="264.5"/>
+  </workflow-item >
+  <workflow-item  name="item4" out-name="item8" type="task">
+    <display-name><![CDATA[SSL thumbPrint]]></display-name>
+    <script encoded="false"><![CDATA[var sslThumbprint = outputText.replace("SHA1 Fingerprint=","");
+//System.log(sslThumbprint);]]></script>
+    <in-binding>
+      <bind name="outputText" type="string" export-name="outputText">
+        <description><![CDATA[Result of running the SSH command]]></description>
+      </bind>
+    </in-binding>
+    <out-binding>
+      <bind name="sslThumbprint" type="string" export-name="sslThumbprint"/>
+    </out-binding>
+    <position y="55.40909090909091" x="544.5"/>
+  </workflow-item >
+  <workflow-item  name="item7" out-name="item4" type="task">
+    <display-name><![CDATA[vm network info]]></display-name>
+    <script encoded="false"><![CDATA[var vmNics = new Array();
+var vNetArray = [];
+	var portGroups = new Array();
+	var vmNets = vm.network
+		for each ( var vmNet in vmNets ){
+			var portName = vmNet.name.split("(")[0];
+			System.log(portName);
+			portGroups.push(portName);
+			}
+
+var devices = vm.config.hardware.device;
+System.log("NetInfo")
+for (var i in devices) {
+	if (System.getModule("com.vmware.library.vc.vm.network").isSupportedNic(devices[i])) {
+		var vNicLabel = devices[i].deviceInfo.label;
+		//System.log(vm.name + " : " + vNicLabel);
+		var vNicNum = vNicLabel.split(" ")[2]
+		var nicNumber = vNicNum
+		//System.log("nicNumber : " + vNicNum)
+		vmNics.push(vNicNum)
+		//System.log(vNicNum);
+		for each ( var ii in vmNics ){
+		if (--nicNumber == 0) {
+		//System.log(devices[i].backing instanceof VcVirtualEthernetCardNetworkBackingInfo)
+			if (devices[i].backing instanceof VcVirtualEthernetCardNetworkBackingInfo) {
+			//System.log("backing : " + devices[i].backing)
+				var output = VcPlugin.convertToVimManagedObject(vm ,devices[i].backing.network);
+				//System.log(output)
+			} else if (devices[i].backing instanceof VcVirtualEthernetCardDistributedVirtualPortBackingInfo) {
+				//System.log(devices[i].backing instanceof VcVirtualEthernetCardDistributedVirtualPortBackingInfo)
+				var portgroupId = null;
+				var networks = vm.network;
+				for (var j in networks) {
+					var network = networks[j];
+					if (network instanceof VcDistributedVirtualPortgroup) {
+							//System.log(network.name)
+							portgroupId = network.id;
+							var vNetName = network.name.split("(")[0]
+							vNetArray.push({"vmName":vm.name,"vNic":vNicNum,"network":vNetName, "portGroup":network});
+							break;
+					}
+				}
+				if (portgroupId == null) {
+				}
+				var moRef = new VcManagedObjectReference();
+				moRef.type = "DistributedVirtualPortgroup";
+				moRef.value = portgroupId;
+				var output = VcPlugin.convertToVimManagedObject(vm ,moRef);
+			} else {
+				//var output = null;
+				}
+			}
+		}
+	}
+}
+//System.log("Total Number of vNics : " + vmNics.length)
+var vNicTotal = vmNics.length
+//System.log(output)
+var vNetworking = JSON.stringify( vNetArray );
+//System.log(vNetworking)
+]]></script>
+    <in-binding>
+      <bind name="vm" type="VC:VirtualMachine" export-name="vm"/>
+    </in-binding>
+    <out-binding>
+      <bind name="output" type="Any" export-name="output"/>
+      <bind name="vNetworking" type="string" export-name="vNetworking"/>
+      <bind name="vNicTotal" type="number" export-name="vNicTotal"/>
+    </out-binding>
+    <position y="55.40909090909091" x="404.5"/>
+  </workflow-item >
+  <workflow-item  name="item8" out-name="item1" type="task">
+    <display-name><![CDATA[VM to Network]]></display-name>
+    <script encoded="false"><![CDATA[//System.log(vNetworking)
+var content = JSON.parse(vNetworking);
+
+
+try{
+	for each ( var i in content ){
+	//System.log(vm.name + " : " + i.vmName)
+		if (vm.name.match(i.vmName)){
+		//System.log("Found Match")
+			var portName = i.network;
+			var nicNumber = new Number(i.vNic);
+			//var portList = i.portGroups
+			//System.log(portName)	
+			var hostPortGroups = newHost.network_DistributedVirtualPortgroup
+			//System.log(hostPortGroups)
+				for each ( var ii in hostPortGroups ){
+				//System.log(ii)
+					if (ii.name.indexOf("(") >= 0){
+						var name = ii.name.split("(")[0]
+					}else{
+						var name = ii.name
+					}
+					//System.log(portName + " : " + name)
+					//System.log(i.network + " : " + ii.name)
+						if (portName.toString().match(name.toString())){
+							//System.log(name + " : " + portName + " : " + vm.name)
+							//System.log("Found correct portgroup")
+							var dvPortgroup = ii
+							var workProps = new Properties();
+							workProps.put("vm",vm);
+							workProps.put("dvPortgroup",dvPortgroup);
+							workProps.put("nicNumber",nicNumber);
+						}
+		  			}	
+				}
+			}		
+
+	}catch(er){
+		System.log(er)
+}
+
+
+]]></script>
+    <in-binding>
+      <bind name="newHost" type="VC:HostSystem" export-name="targetHost">
+        <description><![CDATA[Host to disconnect]]></description>
+      </bind>
+      <bind name="vNetworking" type="string" export-name="vNetworking"/>
+      <bind name="vm" type="VC:VirtualMachine" export-name="vm"/>
+    </in-binding>
+    <out-binding>
+      <bind name="workProps" type="Properties" export-name="workProps"/>
+    </out-binding>
+    <position y="55.40909090909091" x="664.5"/>
+  </workflow-item >
+  <workflow-item  name="item9" out-name="item0" type="task" script-module="com.vmware.library.vc.basic/vim3WaitTaskEnd">
+    <display-name><![CDATA[vim3WaitTaskEnd]]></display-name>
+    <script encoded="false"><![CDATA[//Auto generated script, cannot be modified !
+actionResult = System.getModule("com.vmware.library.vc.basic").vim3WaitTaskEnd(task,progress,pollRate) ;]]></script>
+    <in-binding>
+      <bind name="task" type="VC:Task" export-name="relocateVmTask">
+        <description><![CDATA[Task to Wait for]]></description>
+      </bind>
+      <bind name="progress" type="boolean" export-name="progress">
+        <description><![CDATA[Log progess while waiting for the task]]></description>
+      </bind>
+      <bind name="pollRate" type="number" export-name="pollRate">
+        <description><![CDATA[Polling rate for the task state [seconds]]]></description>
+      </bind>
+    </in-binding>
+    <out-binding>
+      <bind name="actionResult" type="Any" export-name="actionResult"/>
+    </out-binding>
+    <description><![CDATA[Wait for a VC Task to end.
+When task ended, return the task result if any. ]]></description>
+    <position y="55.40909090909091" x="924.5"/>
+  </workflow-item >
+  <presentation>
+    <p-param name="vm">
+      <desc><![CDATA[vm]]></desc>
+    </p-param>
+    <p-param name="targetVC">
+      <desc><![CDATA[targetVC]]></desc>
+    </p-param>
+    <p-param name="targetCluster">
+      <desc><![CDATA[targetCluster]]></desc>
+      <p-qual kind="static" name="show-select-as" type="string"><![CDATA[list]]></p-qual>
+      <p-qual kind="ognl" name="linkedEnumeration" type="Array/VC:ClusterComputeResource"><![CDATA[GetAction("com.vmware.library.vc.cluster","getVCClusterCompute").call(#targetVC)]]></p-qual>
+    </p-param>
+    <p-param name="targetDatastore">
+      <desc><![CDATA[targetDatastore]]></desc>
+      <p-qual kind="ognl" name="dataBinding" type="VC:Datastore"><![CDATA[GetAction("com.vmware.library.vc.datastore","getFreeDatastore").call(#targetCluster)]]></p-qual>
+      <p-qual kind="static" name="notVisible" type="boolean"><![CDATA[true]]></p-qual>
+    </p-param>
+    <p-param name="targetResourcePool">
+      <desc><![CDATA[targetResourcePool]]></desc>
+      <p-qual kind="ognl" name="dataBinding" type="VC:ResourcePool"><![CDATA[GetAction("com.vmware.library.vc.resourcePool","getClusterResourcePool").call(#targetCluster)]]></p-qual>
+      <p-qual kind="static" name="show-select-as" type="string"><![CDATA[list]]></p-qual>
+      <p-qual kind="static" name="notVisible" type="boolean"><![CDATA[true]]></p-qual>
+    </p-param>
+    <p-param name="targetHost">
+      <desc><![CDATA[targetHost]]></desc>
+      <p-qual kind="ognl" name="dataBinding" type="VC:HostSystem"><![CDATA[GetAction("com.vmware.library.vc.cluster","clusterPickHost").call(#targetCluster)]]></p-qual>
+      <p-qual kind="static" name="show-select-as" type="string"><![CDATA[list]]></p-qual>
+      <p-qual kind="static" name="notVisible" type="boolean"><![CDATA[true]]></p-qual>
+    </p-param>
+  </presentation>
+</workflow>

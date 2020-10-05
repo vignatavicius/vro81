@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="PythonJsonTest" result-type="string" api-version="6.0.0" id="a1fc7208-3d43-4510-996b-9e1f89836531" version="0.0.0" category-name="com.vmware.jalbrecht">
+  <runtime><![CDATA[python:3.7]]></runtime>
+  <param n="input" t="string"/>
+  <script encoded="false"><![CDATA[import json
+
+def handler(context, inputs):
+
+    print(context)
+    print(inputs)
+    
+    jsonOut=json.dumps(inputs, separators=(',', ':'))
+    print("Inputs were {0}".format(jsonOut))
+
+    outputs = {
+      "status": "done"
+    }
+
+    return outputs
+]]></script>
+</dunes-script-module>

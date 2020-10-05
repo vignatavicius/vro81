@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<package>
+<description><![CDATA[Export run 6cae15e2-9db0-4eda-9bbc-1922c500918a for workflow '111-WorkflowLogtest' at 5/18/2020, 3:04:26 PM.]]></description>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/WorkflowToken?id='6cae15e2-9db0-4eda-9bbc-1922c500918a'&dunesName='WorkflowToken']]></elm>
+<elm src-category='null'><![CDATA[dunes://service.dunes.ch/Workflow?id='f8acebad-013c-4739-bdd5-7ce89df61832'&dunesName='Workflow']]></elm>
+</package>

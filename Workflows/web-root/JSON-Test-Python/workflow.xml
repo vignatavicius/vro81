@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:workflow xmlns:ns2="http://vmware.com/vco/workflow" root-name="item1" object-name="workflow:name=generic" id="a8ca482b-7c1d-40dc-8799-ecc8e2325c17" editor-version="2.0" version="0.0.0" api-version="6.0.0" restartMode="1" resumeFromFailedMode="0">
+    <display-name>JSON-Test-Python</display-name>
+    <position y="50.0" x="100.0"/>
+    <input/>
+    <output/>
+    <workflow-item name="item0" type="end" end-mode="0" comparator="0">
+        <in-binding/>
+        <out-binding/>
+        <position y="50.0" x="300.0"/>
+    </workflow-item>
+    <workflow-item name="item1" out-name="item0" type="task" comparator="0">
+        <display-name>Scriptable task</display-name>
+        <runtime>python:3.7</runtime>
+        <script encoded="false">import json
+
+def handler(context, inputs):
+    print("Context Raw: {0}".format(context))
+    print("Inputs Raw: {0}".format(inputs))
+
+    jsonOutContext=json.dumps(context, separators=(',', ':'))
+    jsonOutInputs=json.dumps(inputs, separators=(',', ':'))
+    
+    print("Context were {0}".format(jsonOutContext))
+    print("Inputs were {0}".format(jsonOutInputs))
+
+    outputs = {
+      "status": "done"
+    }
+
+    return outputs</script>
+        <in-binding/>
+        <out-binding/>
+        <description>Simple task with custom script capability.</description>
+        <position y="50.0" x="150.0"/>
+    </workflow-item>
+    <presentation/>
+</ns2:workflow>

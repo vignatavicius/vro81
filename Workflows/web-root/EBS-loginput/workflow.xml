@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:workflow xmlns:ns2="http://vmware.com/vco/workflow" root-name="item1" object-name="workflow:name=generic" id="08a88a61-a826-464b-9435-6bfa2d9bee30" editor-version="2.0" version="0.0.1" api-version="6.0.0" restartMode="1" resumeFromFailedMode="0">
+    <display-name>EBS-loginput</display-name>
+    <position y="50.0" x="100.0"/>
+    <input>
+        <param name="catalogItemVersion" type="string"/>
+        <param name="deploymentId" type="string"/>
+        <param name="blueprintVersion" type="string"/>
+        <param name="status" type="string"/>
+        <param name="requestInputs" type="Any"/>
+        <param name="requestType" type="string"/>
+        <param name="id" type="string"/>
+        <param name="blueprintId" type="string"/>
+        <param name="catalogItemId" type="string"/>
+        <param name="eventType" type="string"/>
+        <param name="failureMessage" type="string"/>
+    </input>
+    <output/>
+    <workflow-item name="item0" type="end" end-mode="0" comparator="0">
+        <in-binding/>
+        <out-binding/>
+        <position y="50.0" x="300.0"/>
+    </workflow-item>
+    <workflow-item name="item1" out-name="item0" type="task" comparator="0">
+        <display-name>log</display-name>
+        <script encoded="false">System.log("catalogItemVersion: "+catalogItemVersion);&#13;
+System.log("deploymentId: "+deploymentId);&#13;
+System.log("blueprintVersion: "+blueprintVersion);&#13;
+System.log("status: "+status);&#13;
+System.log("requestInputs: "+requestInputs);&#13;
+System.log("requestType: "+requestType);&#13;
+System.log("id: "+id);&#13;
+System.log("blueprintId: "+blueprintId);&#13;
+System.log("catalogItemId: "+catalogItemId);&#13;
+System.log("eventType: "+eventType);&#13;
+System.log("failureMessage: "+failureMessage);</script>
+        <in-binding>
+            <bind name="catalogItemVersion" type="string" export-name="catalogItemVersion"/>
+            <bind name="deploymentId" type="string" export-name="deploymentId"/>
+            <bind name="blueprintVersion" type="string" export-name="blueprintVersion"/>
+            <bind name="status" type="string" export-name="status"/>
+            <bind name="requestInputs" type="Any" export-name="requestInputs"/>
+            <bind name="requestType" type="string" export-name="requestType"/>
+            <bind name="id" type="string" export-name="id"/>
+            <bind name="blueprintId" type="string" export-name="blueprintId"/>
+            <bind name="catalogItemId" type="string" export-name="catalogItemId"/>
+            <bind name="eventType" type="string" export-name="eventType"/>
+            <bind name="failureMessage" type="string" export-name="failureMessage"/>
+        </in-binding>
+        <out-binding/>
+        <description>Simple task with custom script capability.</description>
+        <position y="50.0" x="150.0"/>
+    </workflow-item>
+    <presentation/>
+</ns2:workflow>

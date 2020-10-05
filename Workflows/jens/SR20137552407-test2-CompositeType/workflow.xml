@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:workflow xmlns:ns2="http://vmware.com/vco/workflow" root-name="item1" object-name="workflow:name=generic" id="190dcaf1-80a1-4e78-85de-573cf6f67054" editor-version="2.0" version="0.0.2" api-version="6.0.0" allowed-operations="vef" restartMode="1" resumeFromFailedMode="0">
+    <display-name>SR20137552407-test2-CompositeType</display-name>
+    <description>SR 20137552407
+https://communities.vmware.com/thread/633354</description>
+    <position y="50.0" x="100.0"/>
+    <input>
+        <param name="input" type="CompositeType(id:number,name:string):SR20137552407"/>
+    </input>
+    <output/>
+    <workflow-item name="item0" type="end" end-mode="0" comparator="0">
+        <in-binding/>
+        <out-binding/>
+        <position y="50.42588623686588" x="391.99142716303"/>
+    </workflow-item>
+    <workflow-item name="item1" out-name="item0" type="task" comparator="0">
+        <display-name>Scriptable task</display-name>
+        <script encoded="false"></script>
+        <in-binding>
+            <bind name="input" type="CompositeType(id:number,name:string):SR20137552407" export-name="input"/>
+        </in-binding>
+        <out-binding/>
+        <description>Simple task with custom script capability.</description>
+        <position y="60.5" x="200.0"/>
+    </workflow-item>
+    <presentation/>
+</ns2:workflow>
