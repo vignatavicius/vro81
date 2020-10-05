@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Server port="8105" shutdown="SHUTDOWN">
+    <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener"/>
+    <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener"/>
+    <Service name="Catalina">
+        <Connector protocol="HTTP/1.1" emptySessionPath="true" URIEncoding="UTF-8"
+                   maxHttpHeaderSize="16384" maxThreads="100" port="8282" address="127.0.0.1"
+                   server=" " redirectPort="8283" scheme="https"/>
+        <Engine name="Catalina" defaultHost="localhost">
+            <Host name="localhost" appBase="webapps"
+                  unpackWARs="true" autoDeploy="true">
+                <Valve className="org.apache.catalina.authenticator.SingleSignOn"/>
+                <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+                       prefix="localhost_access_log" suffix=".txt"
+                       pattern="%{yyyy-MM-dd HH:mm:ss.SSSZ}t &#91;%I&#93; %h %l %u &quot;%r&quot; %s %b %D"
+                       rotatable="false"
+                       checkExists="true"/>
+                <Valve className="org.apache.catalina.valves.RemoteIpValve"
+                       remoteIpHeader="x-forwarded-for"
+                       remoteIpProxiesHeader="x-forwarded-by"
+                       internalProxies=".*"
+                       protocolHeader="x-forwarded-proto"
+                       httpsServerPort="8283"/>
+            </Host>
+        </Engine>
+    </Service>
+</Server>
